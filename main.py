@@ -5,9 +5,8 @@ french_test_list = ["je vais","tu vas", 'il va', "elle va", "on va","nous allons
 english_test_list = ["I go", "You go", "He goes", "She goes", "One goes", "We go", "You go", "They go (masc)", "They go (fem)"]
 
 def get_user_input():
-    'Prompt user to enter an answer'
-    # print("--> ", end="")
-    answer = input("--> ", end="")    
+    'Prompt user to enter an answer'    
+    answer = input("--> ")    
     return answer
 
 def sanitize_data(verb):   

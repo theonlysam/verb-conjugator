@@ -1,35 +1,32 @@
 import sys
 from verbecc import Conjugator
 
-def select_language():
+def display_language():
     languages = {
-                    "1": {
-                            "code": "fr",
-                            "language": "French"    
-                        },
-                    "2": {
-                            "code": "es",
-                            "language": "Spanish"    
-                        },                    
-                }
-    
+        "1": {"code": "fr","language": "French"},
+        "2": {"code": "es","language": "Spanish"},                    
+    }    
     print("Select a target language")
     for key in languages.keys():
         print(f'{key} - {languages[key]["language"]}')
+    return languages    
 
-    while True:
-        language = input("--> ")
-        try:
-            language = languages[language]["code"]
-            break
-        except KeyError:
-            print("Enter a valid number from the list to choose a language or 0 to exit")
-            if language == "0":
-                sys.exit(0)
+def get_user_input(prompt="--> "):  
+    user_input=input(prompt)
+    return user_input
 
-    cg = Conjugator(lang=language)
+def get_language_code(language,languages):          
+    try:
+        language = languages[language]["code"]        
+    except KeyError:
+        print("Enter a valid number from the list to choose a language or 0 to exit")
+        if language == "0":
+            sys.exit(0)
+    return language    
+
+def get_language_instance(lang_code):
+    cg = Conjugator(lang=lang_code)
     return cg
-    
 
 def select_single_verb(cg):
     error = False
@@ -43,107 +40,100 @@ def select_single_verb(cg):
         conjugation_list = cg.conjugate(verb)
         return conjugation_list
 
-def display_and_get_mood(conjugation_list):
+def display_mood(conjugation_list):
     moods = conjugation_list['moods'].keys()
     for index, mood in enumerate(moods):
-        print(f"{index +1 } - {mood}")
-        
-    selected_moods = input("Select the mood(s) to practice, separated by a space --> ")
-    selected_moods = selected_moods.split(" ")    
-    return selected_moods
+        print(f"{index +1 } - {mood}")   
+
+def split_entries(selected_entries):
+    selected_entries = selected_entries.split()    
+    return selected_entries
 
 def validate_selected_mood(selected_moods, conjugation_list):
-    bad_entries = []    
-    mood_list = list(conjugation_list['moods'])
-    mood_names = []
+    bad_entries, good_entries = [], []    
+    entries_list = list(conjugation_list["moods"])
+    correct_numbers = range(len(entries_list))
 
-    for index,mood in enumerate(selected_moods):
+    for mood in selected_moods:
         try:
-            if (mood.isdigit()) and (int(mood) <= len(selected_moods)): 
-                mood_names.append(mood_list[index])                         
-                continue
+            index = (int(mood) -1)
         except ValueError:
-            pass                  
-        
-        bad_entries.append(mood)
-         
-    print(mood_names)        #remove  
+            pass 
+        if index in correct_numbers:
+            good_entries.append(entries_list[index])
+        else:  
+            bad_entries.append(mood)  
     if bad_entries:
-        print(f"\nThe following are not valid entries {bad_entries}")    
-    return mood_names
+        print(f"\nThe following are not valid entries {bad_entries}")     
+    return good_entries
 
-def validate_selected_tense(selected_mood_and_tense, conjugation_list):
-    pass
-
-def display_and_get_tense(mood_names, conjugation_list):
-    selected_mood_and_tense = {}
-    tense_names = []
-    bad_entries = []
+def select_tense(selected_moods, conjugation_list):   
+    mood_tense_dict = {}
+    for mood in selected_moods:
+        display_tense(mood, conjugation_list)
+        tense_list = get_user_input(prompt="Select the tense(s) to practice, separated by a space --> ")
+        tense_list = split_entries(tense_list)
+        mood_tense_dict.update(validate_selected_tense(mood, tense_list, conjugation_list))  
+    print(mood_tense_dict)
     
-    for mood_name in mood_names:
-        tenses = list(conjugation_list['moods'][mood_name].keys())
+    return mood_tense_dict
 
-        for index, tense in enumerate(tenses):
-          print(f"{index  } - {tense}")
-                
-        selected_tenses = input(f"\nSelect the tense(s) to practice for {mood_name}, separated by a space --> ")
-        selected_tenses = selected_tenses.split(" ")    
+def display_tense(mood_name, conjugation_list):    
+    tenses = list(conjugation_list['moods'][mood_name].keys())
+    print(tenses)
+    for index, tense in enumerate(tenses):
+      print(f"{index + 1 } - {tense}")
 
-        #validation of input for tense
-        for index, tense in enumerate(selected_tenses):
-            try:
-                if (tense.isdigit()) and (int(tense) <= len(selected_tenses)): 
-                    tense_names.append(tenses[index])                         
-                    continue
-            except ValueError:
-                pass   
+def validate_selected_tense(mood, selected_tenses, conjugation_list):
+    bad_entries, good_entries = [],[]
+    selected_mood_and_tense = {}     
+    tense_list = list(conjugation_list["moods"][mood])
+    correct_numbers = range(len(tense_list))    
 
-            bad_entries.append(mood)
-         
-    
-        # build dictionary
-        selected_mood_and_tense[mood_name] = tense_names
-
-        if bad_entries:
-          print(f"\nThe following are not valid entries {bad_entries}")
-        print(selected_mood_and_tense)
+    for tense in selected_tenses:       
+        try:
+            index = (int(tense) -1)
+        except ValueError:
+            pass 
+        if index in correct_numbers:
+            good_entries.append(tense_list[index])
+        else:  
+            bad_entries.append(mood)             
+      
+    selected_mood_and_tense[mood] = good_entries
+    if bad_entries:
+      print(f"\nThe following are not valid entries {bad_entries}")
+    print(selected_mood_and_tense) # remove
     return selected_mood_and_tense
 
-def drill_and_practice(selected_mood_and_tense, conjugation_list):
-    for mood in selected_mood_and_tense.keys():
-        print(mood)
+def drill_and_practice(selected_mood_and_tense, conjugation_list):    
+
+    for mood in selected_mood_and_tense.keys():        
         tenses = selected_mood_and_tense[mood]
-        print(tenses)
+        for tense in tenses:
+            print(f"\nConjugate the {tense} tense in the {mood} mood")
+            conjugated_pronouns = conjugation_list["moods"][mood][tense]
+            for pronoun in conjugated_pronouns:                
+                split_pronoun = split_entries(pronoun)
+                answer = get_user_input(prompt=f"-->{split_pronoun[0]} ")
+                answer = answer.strip()
+                answer = f"{split_pronoun[0]} {answer}"
+                split_pronoun = f"{split_pronoun[0]} {split_pronoun[1]}"                
+                
+                check_user_input(sanitize_data(answer),sanitize_data(split_pronoun),pronoun)
+                    
 
         
-            
-
-
 def sanitize_data(verb):   
     verb = verb.strip().replace(" ","").lower()
     return verb
 
-def check_user_input(answer,index):
+def check_user_input(user_answer,correct_answer,pronoun):
     'Check if the user entered the correct/expected conjugation'
-    return sanitize_data(answer) == sanitize_data(french_test_list[index])
-
-def display_question():
-    'Display the verb conjugation the user has to enter'
-    print("Conjugate in french the verb {test_verb}")
-
-    for index, verb in enumerate(english_test_list):
-        print(f'{verb} ', end="")
-        reply = get_user_input()
-        if check_user_input(reply,index):
-            print("Correct")
-        else:
-            print(f'Sorry the answer is {french_test_list[index]}')
-
-def display_full_verb_conjugation():
-    'Display the entire conjugation list for the verb (single tense)'
-
-    for index, verb in enumerate(english_test_list):
-        print(f'{verb} --> {french_test_list[index]}')
+    if sanitize_data(user_answer) == sanitize_data(correct_answer):
+        print("Correct")
+    else:
+        print(f"Sorry the answer is {pronoun}")
 
 def display_menu():
     print("Select an option:")
@@ -155,11 +145,18 @@ def display_menu():
     return selection
 
 def main():    
-    conjugation_list = select_single_verb(select_language())
-    moods_tense = display_and_get_mood(conjugation_list)
-    mood_names = validate_selected_mood(moods_tense, conjugation_list)
-    mood_and_tense = display_and_get_tense(mood_names, conjugation_list)
-    drill_and_practice(mood_and_tense, conjugation_list)
+    languages = display_language()
+    lang = get_user_input()    
+    lang_code = get_language_code(lang, languages)
+    lang_instance = get_language_instance(lang_code)
+    conjugation_list = select_single_verb(lang_instance)
+    display_mood(conjugation_list)
+    mood_list = get_user_input(prompt="Select the mood(s) to practice, separated by a space --> ")    
+    mood_list = split_entries(mood_list)   
+    mood_names = validate_selected_mood(mood_list, conjugation_list)
+    mood_tense_dict = select_tense(mood_names, conjugation_list)
+    
+    drill_and_practice(mood_tense_dict, conjugation_list)
 
 if __name__ == "__main__":
     main()

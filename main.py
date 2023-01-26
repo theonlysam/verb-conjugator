@@ -45,9 +45,9 @@ def display_mood(conjugation_list):
     for index, mood in enumerate(moods):
         print(f"{index +1 } - {mood}")   
 
-def split_entries(selected_entries):
-    selected_entries = selected_entries.split()    
-    return selected_entries
+# def split_entries(selected_entries):
+#     selected_entries = selected_entries.split()    
+#     return selected_entries
 
 def validate_selected_mood(selected_moods, conjugation_list):  
     entries_list = list(conjugation_list["moods"])   
@@ -59,21 +59,22 @@ def validate_selected_mood(selected_moods, conjugation_list):
 
 def validate_selected_tense(mood, selected_tenses, conjugation_list):   
     selected_mood_and_tense = {}     
-    tense_list = list(conjugation_list["moods"][mood])
-    good_entries, bad_entries = validator(selected_tenses, tense_list)      
+    tenses = list(conjugation_list["moods"][mood])
+    good_entries, bad_entries = validator(selected_tenses, tenses)      
     selected_mood_and_tense[mood] = good_entries
 
     if bad_entries:
       print(f"\nThe following are not valid entries {bad_entries}")   
     return selected_mood_and_tense
 
-def select_tense(selected_moods, conjugation_list):   
+def select_tense(selected_moods, conjugations):   
     mood_tense_dict = {}
     for mood in selected_moods:
-        display_tense(mood, conjugation_list)
+        display_tense(mood, conjugations)
         tense_list = get_user_input(prompt="Select the tense(s) to practice, separated by a space --> ")
-        tense_list = split_entries(tense_list)
-        mood_tense_dict.update(validate_selected_tense(mood, tense_list, conjugation_list))  
+        tense_list = tense_list.split()
+        validated_tenses = validate_selected_tense(mood, tense_list, conjugations)
+        mood_tense_dict.update(validated_tenses)  
     print(mood_tense_dict)
     
     return mood_tense_dict
@@ -107,7 +108,7 @@ def user_conjugation(selected_mood_and_tense, conjugation_list):
             print(f"\nConjugate the {tense} tense in the {mood} mood")
             conjugated_pronouns = conjugation_list["moods"][mood][tense]
             for pronoun in conjugated_pronouns:                
-                split_pronoun = split_entries(pronoun)
+                split_pronoun = pronoun.split()
                 answer = get_user_input(prompt=f"-->{split_pronoun[0]} ")
                 answer = answer.strip()
                 answer = f"{split_pronoun[0]} {answer}"
@@ -132,11 +133,11 @@ def initiation_functions():
     languages = display_language()
     lang = get_user_input()    
     lang_code = get_language_code(lang, languages)
-    lang_instance = get_language_instance(lang_code)
+    lang_instance = Conjugator(lang=lang_code) #get_language_instance(lang_code)
     conjugation_list = select_single_verb(lang_instance)
     display_mood(conjugation_list)
-    mood_list = get_user_input(prompt="Select the mood(s) to practice, separated by a space --> ")    
-    mood_list = split_entries(mood_list)   
+    mood_list = get_user_input(prompt="Select the mood(s) separated by a space --> ")    
+    mood_list = mood_list.split()   
     mood_names = validate_selected_mood(mood_list, conjugation_list)
     mood_tense_dict = select_tense(mood_names, conjugation_list)
     return mood_tense_dict, conjugation_list
@@ -163,7 +164,6 @@ def display_verb_conjugation():
         tenses = mood_tense_dict[mood]
     for tense in tenses:
         print(f"\n{mood} - {tense} tense")        
-        
         conjugated_pronouns = conjugation_list["moods"][mood][tense]
         for pronoun in conjugated_pronouns:                
             print(f"{pronoun}")

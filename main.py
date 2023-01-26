@@ -99,7 +99,7 @@ def validator(entries, item_list):
             bad_entries.append(entry)
     return good_entries, bad_entries
 
-def drill_and_practice(selected_mood_and_tense, conjugation_list):    
+def user_conjugation(selected_mood_and_tense, conjugation_list):    
 
     for mood in selected_mood_and_tense.keys():        
         tenses = selected_mood_and_tense[mood]
@@ -128,16 +128,7 @@ def check_user_input(user_answer,correct_answer,pronoun):
     else:
         print(f"Sorry the answer is {pronoun}")
 
-def display_menu():
-    print("Select an option:")
-    print("1 - Conjugated verb list ")
-    print("2 - Drill and Practice")
-    print("3 - Exit")
-    print("--> ", end="")
-    selection = input()
-    return selection
-
-def main():    
+def drill_and_practice():    
     languages = display_language()
     lang = get_user_input()    
     lang_code = get_language_code(lang, languages)
@@ -147,9 +138,39 @@ def main():
     mood_list = get_user_input(prompt="Select the mood(s) to practice, separated by a space --> ")    
     mood_list = split_entries(mood_list)   
     mood_names = validate_selected_mood(mood_list, conjugation_list)
-    mood_tense_dict = select_tense(mood_names, conjugation_list)
-    
-    drill_and_practice(mood_tense_dict, conjugation_list)
+    mood_tense_dict = select_tense(mood_names, conjugation_list)  
+    # import pdb; pdb.set_trace()
+
+    while True:
+        user_conjugation(mood_tense_dict, conjugation_list)
+        try:
+            user_repeat = input("Do you want to practice this one again? 1-Yes, 2-No --> ")
+        except ValueError:
+            print("Invalid entry")            
+        if user_repeat == '1':
+            continue
+        elif user_repeat == '2':
+            break
+
+
+def display_menu():
+    print("\nSelect an option:")
+    print("1 - Conjugated verb list ")
+    print("2 - Drill and Practice")
+    print("3 - Exit")
+    selection = input("--> ")    
+    return selection
+
+def main(): 
+    while True:
+        user_selection = display_menu()   
+        if user_selection == '1':
+            print("Not implemented")
+        elif user_selection == '2':
+            drill_and_practice()
+        else:
+            print("\nGoodbye!")
+            sys.exit(0) 
 
 if __name__ == "__main__":
     main()

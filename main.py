@@ -49,23 +49,23 @@ def split_entries(selected_entries):
     selected_entries = selected_entries.split()    
     return selected_entries
 
-def validate_selected_mood(selected_moods, conjugation_list):
-    bad_entries, good_entries = [], []    
-    entries_list = list(conjugation_list["moods"])
-    correct_numbers = range(len(entries_list))
+def validate_selected_mood(selected_moods, conjugation_list):  
+    entries_list = list(conjugation_list["moods"])   
+    good_entries, bad_entries = validator(selected_moods, entries_list) 
 
-    for mood in selected_moods:
-        try:
-            index = (int(mood) -1)
-        except ValueError:
-            pass 
-        if index in correct_numbers:
-            good_entries.append(entries_list[index])
-        else:  
-            bad_entries.append(mood)  
     if bad_entries:
         print(f"\nThe following are not valid entries {bad_entries}")     
     return good_entries
+
+def validate_selected_tense(mood, selected_tenses, conjugation_list):   
+    selected_mood_and_tense = {}     
+    tense_list = list(conjugation_list["moods"][mood])
+    good_entries, bad_entries = validator(selected_tenses, tense_list)      
+    selected_mood_and_tense[mood] = good_entries
+
+    if bad_entries:
+      print(f"\nThe following are not valid entries {bad_entries}")   
+    return selected_mood_and_tense
 
 def select_tense(selected_moods, conjugation_list):   
     mood_tense_dict = {}
@@ -84,27 +84,20 @@ def display_tense(mood_name, conjugation_list):
     for index, tense in enumerate(tenses):
       print(f"{index + 1 } - {tense}")
 
-def validate_selected_tense(mood, selected_tenses, conjugation_list):
+def validator(entries, item_list):
     bad_entries, good_entries = [],[]
-    selected_mood_and_tense = {}     
-    tense_list = list(conjugation_list["moods"][mood])
-    correct_numbers = range(len(tense_list))    
-
-    for tense in selected_tenses:       
+    correct_numbers = range(len(item_list))    
+    index = -1
+    for entry in entries:
         try:
-            index = (int(tense) -1)
+            index = (int(entry) -1)
         except ValueError:
-            pass 
+            pass
         if index in correct_numbers:
-            good_entries.append(tense_list[index])
-        else:  
-            bad_entries.append(mood)             
-      
-    selected_mood_and_tense[mood] = good_entries
-    if bad_entries:
-      print(f"\nThe following are not valid entries {bad_entries}")
-    print(selected_mood_and_tense) # remove
-    return selected_mood_and_tense
+            good_entries.append(item_list[index])
+        else:
+            bad_entries.append(entry)
+    return good_entries, bad_entries
 
 def drill_and_practice(selected_mood_and_tense, conjugation_list):    
 

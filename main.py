@@ -183,13 +183,12 @@ def display_verb_conjugation():
     "Displays the conjugation of the verb in the selected mood and tense"
     mood_tense_dict, conjugation_list = initiation_functions()
 
-    for mood in mood_tense_dict.keys():
-        tenses = mood_tense_dict[mood]
-    for tense in tenses:
-        print(f"\n{mood} - {tense} tense")
-        conjugated_pronouns = conjugation_list["moods"][mood][tense]
-        for pronoun in conjugated_pronouns:
-            print(f"{pronoun}")
+    for mood, tenses in mood_tense_dict.items():
+        for tense in tenses:
+            print(f"\n{mood} - {tense} tense")
+            conjugated_pronouns = conjugation_list["moods"][mood][tense]
+            for pronoun in conjugated_pronouns:
+                print(pronoun)
 
 
 def display_menu():

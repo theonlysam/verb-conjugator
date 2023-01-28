@@ -53,11 +53,6 @@ def display_mood(conjugation_list):
         print(f"{index +1 } - {mood}")
 
 
-# def split_entries(selected_entries):
-#     selected_entries = selected_entries.split()
-#     return selected_entries
-
-
 def validate_selected_mood(selected_moods, conjugation_list):
     entries_list = list(conjugation_list["moods"])
     good_entries, bad_entries = validator(selected_moods, entries_list)

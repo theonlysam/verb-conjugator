@@ -42,14 +42,14 @@ class VerbConjugator():
     #     self.conjugator_instance = Conjugator(lang=lang_code)
         
     def select_single_verb(self):
-        error = False
-        verb = None
-        try:
-            verb = input("Enter the verb to practice conjugating --> ")
-        except:
-            print(f"Unable to find {verb} or it does not exist")            
-        else:           
-            return self.conjugator_instance.conjugate(verb)
+        verb_conjugation = None     
+        verb = input("Enter the verb to practice conjugating --> ") 
+        try:          
+            verb_conjugation = self.conjugator_instance.conjugate(verb)
+        except AttributeError:
+            print(f"{verb} does appear to be a valid verb")
+        else:
+            return verb_conjugation
 
     def display_mood(self):
         moods = self.conjugations["moods"].keys()

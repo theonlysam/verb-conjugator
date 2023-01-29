@@ -30,13 +30,12 @@ class VerbConjugator():
         return user_input
 
     def get_language_code(self,language):
-        lang_code = None
+        lang_code = None        
         try:
             lang_code = self.languages[language]["code"]
         except KeyError:
-            print("Enter a valid number from the list to choose a language or 0 to exit")
-            if lang_code == "0":
-                sys.exit(0)
+            print("Enter a valid number from the list to choose a language")
+            sys.exit(0)          
         return lang_code
 
     # def get_language_instance(self, lang_code):

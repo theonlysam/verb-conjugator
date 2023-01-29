@@ -13,7 +13,7 @@ class VerbConjugator():
         self.user_input = None
         self.selected_lang = None
         self.lang_code = None
-        self.conjugator_instance = None #used to be cg
+        self.conjugator_instance = None
         self.conjugations = None
         self.selected_mood_and_tense = {}
         self.moods = []
@@ -38,7 +38,7 @@ class VerbConjugator():
                 sys.exit(0)
         return lang_code
 
-    def get_language_instance(self): # need to pass language code
+    def get_language_instance(self):
         self.conjugator_instance = Conjugator(lang=self.lang_code)
     
     def select_single_verb(self):
@@ -76,8 +76,7 @@ class VerbConjugator():
             print(f"\nThe following are not valid entries {bad_entries}")
         return selected_mood_and_tense
         
-    def select_tense(self, selected_moods):
-        # import pdb; pdb.set_trace()
+    def select_tense(self, selected_moods):       
         mood_tense_dict = {}
         for mood in selected_moods:
             self.display_tense(mood)
@@ -109,8 +108,7 @@ class VerbConjugator():
                 bad_entries.append(entry)
         return good_entries, bad_entries
     
-    def quiz_user(self):
-    
+    def quiz_user(self):    
         for mood in self.mood_tense.keys():
             tenses = self.mood_tense[mood]
             for tense in tenses:
@@ -138,9 +136,7 @@ class VerbConjugator():
         else:
             print(f"Sorry the answer is {pronoun}")
 
-    def drill_and_practice(self):
-        # mood_tense_dict, conjugation_list = initiation_functions()
-
+    def drill_and_practice(self): 
         while True:
             self.quiz_user()
             try:
@@ -155,8 +151,7 @@ class VerbConjugator():
                 break
 
     def display_verb_conjugation(self):
-        "Displays the conjugation of the verb in the selected mood and tense"
-        # mood_tense_dict, conjugation_list = initiation_functions()
+        "Displays the conjugation of the verb in the selected mood and tense"        
         
         for mood, tenses in self.mood_tense.items():
             for tense in tenses:
@@ -184,8 +179,3 @@ class VerbConjugator():
         print("3 - Exit")
         selection = input("--> ")
         return selection
-
-
-vc = VerbConjugator()
-vc.setup()
-vc.drill_and_practice()

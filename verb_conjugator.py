@@ -46,11 +46,9 @@ class VerbConjugator():
         verb = None
         try:
             verb = input("Enter the verb to practice conjugating --> ")
-        except AttributeError:
-            print(f"Unable to find {verb} or it does not exist")
-            error = True
-
-        if not error:            
+        except:
+            print(f"Unable to find {verb} or it does not exist")            
+        else:           
             return self.conjugator_instance.conjugate(verb)
 
     def display_mood(self):

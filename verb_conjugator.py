@@ -25,11 +25,12 @@ class VerbConjugator():
         for key in self.languages.keys():
             print(f'{key} - {self.languages[key]["language"]}')
     
-    def get_user_input(self,prompt="--> "):
-        user_input = input(prompt)
+    def get_user_input(self,prompt="--> ", user_input=None):
+        user_input = user_input or input(prompt)
         return user_input
 
     def get_language_code(self,language):
+        lang_code = None
         try:
             lang_code = self.languages[language]["code"]
         except KeyError:
@@ -38,9 +39,9 @@ class VerbConjugator():
                 sys.exit(0)
         return lang_code
 
-    def get_language_instance(self):
-        self.conjugator_instance = Conjugator(lang=self.lang_code)
-    
+    # def get_language_instance(self, lang_code):
+    #     self.conjugator_instance = Conjugator(lang=lang_code)
+        
     def select_single_verb(self):
         error = False
         verb = None
@@ -133,8 +134,10 @@ class VerbConjugator():
         "Check if the user entered the correct/expected conjugation"
         if self.sanitize_data(user_answer) == self.sanitize_data(correct_answer):
             print("Correct")
+            return True
         else:
             print(f"Sorry the answer is {pronoun}")
+            return False
 
     def drill_and_practice(self): 
         while True:
@@ -164,7 +167,7 @@ class VerbConjugator():
         self.display_language()
         self.selected_lang = self.get_user_input()
         self.lang_code = self.get_language_code(self.selected_lang)
-        self.get_language_instance()
+        self.conjugator_instance= Conjugator(self.lang_code)
         self.conjugations = self.select_single_verb()
         self.display_mood()
         self.moods = self.get_user_input(prompt="Select the mood(s) separated by a space --> ")

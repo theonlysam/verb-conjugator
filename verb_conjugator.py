@@ -166,6 +166,9 @@ class VerbConjugator():
         self.lang_code = self.get_language_code(self.selected_lang)
         self.conjugator_instance= Conjugator(self.lang_code)
         self.conjugations = self.select_single_verb()
+        if not self.conjugations:
+            print("Unable to continue")
+            sys.exit("Exiting")
         self.display_mood()
         self.moods = self.get_user_input(prompt="Select the mood(s) separated by a space --> ")
         self.moods = self.moods.split()

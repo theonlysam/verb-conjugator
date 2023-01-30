@@ -44,7 +44,7 @@ def test_incorrect_language_code_raises_exception(verb_con):
 
 def test_nonexistent_french_verb_raises_exception(verb_con):
     "Want to test select_single_verb method"
-    pass
+    # verb_con.select_single_verb("verb")
 
 
 def test_if_valid_french_moods_are_returned(verb_con):

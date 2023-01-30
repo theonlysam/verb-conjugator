@@ -40,9 +40,9 @@ class VerbConjugator:
     # def get_language_instance(self, lang_code):
     #     self.conjugator_instance = Conjugator(lang=lang_code)
 
-    def select_single_verb(self):
+    def select_single_verb(self, verb=None):
         verb_conjugation = None
-        verb = input("Enter the verb to practice conjugating --> ")
+        verb = verb or input("Enter the verb to practice conjugating --> ")
         try:
             verb_conjugation = self.conjugator_instance.conjugate(verb)
         except AttributeError:

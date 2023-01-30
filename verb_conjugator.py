@@ -73,14 +73,10 @@ class VerbConjugator:
             print(f"\nThe following are not valid entries {bad_entries}")
         return selected_mood_and_tense
 
-    def select_tense(self, selected_moods):
+    def select_tense(self, selected_moods, tense_lists):
         mood_tense_dict = {}
-        for mood in selected_moods:
-            self.display_tense(mood)
-            tense_list = self.get_user_input(
-                prompt="Select the tense(s) to practice, separated by a space --> "
-            )
-            tense_list = tense_list.split()
+        for i, mood in enumerate(selected_moods):
+            tense_list = tense_lists[i].split()
             validated_tenses = self.validate_selected_tense(mood, tense_list)
             mood_tense_dict.update(validated_tenses)
         return mood_tense_dict
@@ -176,7 +172,16 @@ class VerbConjugator:
         )
         self.moods = self.moods.split()
         self.mood_names = self.validate_selected_mood(self.moods)
-        self.mood_tense = self.select_tense(self.mood_names)
+
+        tense_lists = []
+        for mood in self.mood_names:
+            self.display_tense(mood)
+            tense_lists.append(
+                self.get_user_input(
+                    prompt="Select the tense(s) to practice, separated by a space --> "
+                )
+            )
+        self.mood_tense = self.select_tense(self.mood_names, tense_lists)
 
     def display_menu(self):
         print("\nSelect an option:")

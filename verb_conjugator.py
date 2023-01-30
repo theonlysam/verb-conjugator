@@ -3,8 +3,7 @@ import sys
 from verbecc import Conjugator
 
 
-class VerbConjugator():
-
+class VerbConjugator:
     def __init__(self):
         self.languages = {
             "1": {"code": "fr", "language": "French"},
@@ -24,27 +23,27 @@ class VerbConjugator():
         print("Select a target language")
         for key in self.languages.keys():
             print(f'{key} - {self.languages[key]["language"]}')
-    
-    def get_user_input(self,prompt="--> ", user_input=None):
+
+    def get_user_input(self, prompt="--> ", user_input=None):
         user_input = user_input or input(prompt)
         return user_input
 
-    def get_language_code(self,language):
-        lang_code = None        
+    def get_language_code(self, language):
+        lang_code = None
         try:
             lang_code = self.languages[language]["code"]
         except KeyError:
             print("Enter a valid number from the list to choose a language")
-            sys.exit(0)          
+            sys.exit(1)  # raise SystemExit
         return lang_code
 
     # def get_language_instance(self, lang_code):
     #     self.conjugator_instance = Conjugator(lang=lang_code)
-        
+
     def select_single_verb(self):
-        verb_conjugation = None     
-        verb = input("Enter the verb to practice conjugating --> ") 
-        try:          
+        verb_conjugation = None
+        verb = input("Enter the verb to practice conjugating --> ")
+        try:
             verb_conjugation = self.conjugator_instance.conjugate(verb)
         except AttributeError:
             print(f"{verb} does appear to be a valid verb")
@@ -54,12 +53,12 @@ class VerbConjugator():
     def display_mood(self):
         moods = self.conjugations["moods"].keys()
         for index, mood in enumerate(moods):
-            print(f"{index +1 } - {mood}")     
+            print(f"{index +1 } - {mood}")
 
     def validate_selected_mood(self, selected_moods):
         entries_list = list(self.conjugations["moods"])
         good_entries, bad_entries = self.validator(selected_moods, entries_list)
-    
+
         if bad_entries:
             print(f"\nThe following are not valid entries {bad_entries}")
         return good_entries
@@ -73,8 +72,8 @@ class VerbConjugator():
         if bad_entries:
             print(f"\nThe following are not valid entries {bad_entries}")
         return selected_mood_and_tense
-        
-    def select_tense(self, selected_moods):       
+
+    def select_tense(self, selected_moods):
         mood_tense_dict = {}
         for mood in selected_moods:
             self.display_tense(mood)
@@ -86,8 +85,8 @@ class VerbConjugator():
             mood_tense_dict.update(validated_tenses)
         return mood_tense_dict
 
-    def display_tense(self,mood_name):
-        tenses = list(self.conjugations["moods"][mood_name].keys())        
+    def display_tense(self, mood_name):
+        tenses = list(self.conjugations["moods"][mood_name].keys())
         for index, tense in enumerate(tenses):
             print(f"{index + 1 } - {tense}")
 
@@ -99,14 +98,16 @@ class VerbConjugator():
             try:
                 index = int(entry) - 1
             except ValueError:
-                pass
+                bad_entries.append(entry)
+                continue
+
             if index in correct_numbers:
                 good_entries.append(item_list[index])
             else:
                 bad_entries.append(entry)
         return good_entries, bad_entries
-    
-    def quiz_user(self):    
+
+    def quiz_user(self):
         for mood in self.mood_tense.keys():
             tenses = self.mood_tense[mood]
             for tense in tenses:
@@ -120,23 +121,23 @@ class VerbConjugator():
                     split_pronoun = f"{split_pronoun[0]} {split_pronoun[1]}"
 
                     self.check_user_input(
-                        self.sanitize_data(answer), self.sanitize_data(split_pronoun), pronoun
+                        self.sanitize_data(answer), self.sanitize_data(split_pronoun)
                     )
 
     def sanitize_data(self, verb):
         verb = verb.strip().replace(" ", "").lower()
         return verb
 
-    def check_user_input(self, user_answer, correct_answer, pronoun):
+    def check_user_input(self, user_answer, correct_answer):
         "Check if the user entered the correct/expected conjugation"
         if self.sanitize_data(user_answer) == self.sanitize_data(correct_answer):
             print("Correct")
             return True
         else:
-            print(f"Sorry the answer is {pronoun}")
+            print(f"Sorry the answer is {correct_answer}")
             return False
 
-    def drill_and_practice(self): 
+    def drill_and_practice(self):
         while True:
             self.quiz_user()
             try:
@@ -151,8 +152,8 @@ class VerbConjugator():
                 break
 
     def display_verb_conjugation(self):
-        "Displays the conjugation of the verb in the selected mood and tense"        
-        
+        "Displays the conjugation of the verb in the selected mood and tense"
+
         for mood, tenses in self.mood_tense.items():
             for tense in tenses:
                 print(f"\n{mood} - {tense} tense")
@@ -164,13 +165,15 @@ class VerbConjugator():
         self.display_language()
         self.selected_lang = self.get_user_input()
         self.lang_code = self.get_language_code(self.selected_lang)
-        self.conjugator_instance= Conjugator(self.lang_code)
+        self.conjugator_instance = Conjugator(self.lang_code)
         self.conjugations = self.select_single_verb()
         if not self.conjugations:
             print("Unable to continue")
             sys.exit("Exiting")
         self.display_mood()
-        self.moods = self.get_user_input(prompt="Select the mood(s) separated by a space --> ")
+        self.moods = self.get_user_input(
+            prompt="Select the mood(s) separated by a space --> "
+        )
         self.moods = self.moods.split()
         self.mood_names = self.validate_selected_mood(self.moods)
         self.mood_tense = self.select_tense(self.mood_names)

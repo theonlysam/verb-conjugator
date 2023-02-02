@@ -4,7 +4,7 @@ from verb_conjugator import VerbConjugator
 
 
 def main():
-    vc = VerbConjugator()    
+    vc = VerbConjugator()
 
     while True:
         user_selection = vc.display_menu()
@@ -25,4 +25,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

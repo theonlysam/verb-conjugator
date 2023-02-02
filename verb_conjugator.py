@@ -186,13 +186,7 @@ class VerbConjugator:
         selection = input("--> ")
         return selection
 
-    def common_verbs_quiz(self, common_verbs):       
-        # french_verbs = [
-        #     "aller", "avoir", "connaitre", "devoir", "dire", "donner", "etre", 
-        #     "faire", "mettre", "pouvoir", "venir", "vouloir", "voir"
-        #     ]
-        # tenses = ["présent", "passé-composé", "imparfait", "futur-simple"]
-        # common_verbs = self.get_common_verbs()
+    def common_verbs_quiz(self, common_verbs):      
         lang_code = self.lang_code
         mood = common_verbs[lang_code]['mood']
         new_verbs = common_verbs[lang_code]['verbs']

@@ -2,6 +2,7 @@ import json
 import random
 import sys
 from typing import NamedTuple
+from collections import defaultdict
 
 from verbecc import Conjugator
 
@@ -198,17 +199,17 @@ class VerbConjugator:
         mood = common_verbs[lang_code]["mood"]
         new_verbs = common_verbs[lang_code]["verbs"]
         tenses = common_verbs[lang_code]["tenses"]
-        # verbs = dict.fromkeys(french_verbs, {})tenses = dict.fromkeys(french_tenses, {})
-        verbs = {}  # verbs = dict.fromkeys(french_verbs, {})
+        
+        verbs = defaultdict(dict)  
         for verb in new_verbs:
-            verbs[verb] = {}
+            # verbs[verb] = {}
             self.conjugations = self.select_single_verb(verb=verb)
             for tense in tenses:
                 verbs[verb][tense] = {}
                 verbs[verb][tense] = self.conjugations["moods"][mood][tense]
 
         continue_loop = True
-        print("Welcome to random common verb quiz, please q to quit at anytime")
+        print("Welcome to random common verb quiz, press q to quit at anytime")
         while continue_loop:
             random_verb = self.get_random_conjugation(verbs, tenses)
             print(f"\n{random_verb.tense} - {random_verb.verb}")

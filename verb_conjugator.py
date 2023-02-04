@@ -201,8 +201,7 @@ class VerbConjugator:
         tenses = common_verbs[lang_code]["tenses"]
         
         verbs = defaultdict(dict)  
-        for verb in new_verbs:
-            # verbs[verb] = {}
+        for verb in new_verbs:            
             self.conjugations = self.select_single_verb(verb=verb)
             for tense in tenses:
                 verbs[verb][tense] = {}

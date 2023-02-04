@@ -1,6 +1,15 @@
+import json
+import random
 import sys
+from typing import NamedTuple
 
 from verbecc import Conjugator
+
+
+class RandomVerb(NamedTuple):
+    verb: str
+    tense: str
+    conjugation: str
 
 
 class VerbConjugator:
@@ -110,15 +119,7 @@ class VerbConjugator:
                 print(f"\nConjugate the {tense} tense in the {mood} mood")
                 conjugated_pronouns = self.conjugations["moods"][mood][tense]
                 for pronoun in conjugated_pronouns:
-                    split_pronoun = pronoun.split()
-                    answer = self.get_user_input(prompt=f"-->{split_pronoun[0]} ")
-                    answer = answer.strip()
-                    answer = f"{split_pronoun[0]} {answer}"
-                    split_pronoun = f"{split_pronoun[0]} {split_pronoun[1]}"
-
-                    self.check_user_input(
-                        self.sanitize_data(answer), self.sanitize_data(split_pronoun)
-                    )
+                    self.quiz_question(pronoun)
 
     def sanitize_data(self, verb):
         verb = verb.strip().replace(" ", "").lower()
@@ -186,7 +187,53 @@ class VerbConjugator:
     def display_menu(self):
         print("\nSelect an option:")
         print("1 - Display verb conjugation ")
-        print("2 - Drill and Practice")
-        print("3 - Exit")
+        print("2 - Single verb quiz")
+        print("3 - Common verbs quiz")
+        print("4 - Exit")
         selection = input("--> ")
         return selection
+
+    def common_verbs_quiz(self, common_verbs):
+        lang_code = self.lang_code
+        mood = common_verbs[lang_code]["mood"]
+        new_verbs = common_verbs[lang_code]["verbs"]
+        tenses = common_verbs[lang_code]["tenses"]
+        # verbs = dict.fromkeys(french_verbs, {})tenses = dict.fromkeys(french_tenses, {})
+        verbs = {}  # verbs = dict.fromkeys(french_verbs, {})
+        for verb in new_verbs:
+            verbs[verb] = {}
+            self.conjugations = self.select_single_verb(verb=verb)
+            for tense in tenses:
+                verbs[verb][tense] = {}
+                verbs[verb][tense] = self.conjugations["moods"][mood][tense]
+
+        while True:
+            random_verb = self.get_random_conjugation(verbs, tenses)
+            print(f"\n{random_verb.tense} - {random_verb.verb}")
+            self.quiz_question(random_verb.conjugation)
+
+    def get_common_verbs(self, file_name="common_verbs.txt"):
+        with open(file_name) as file1:
+            common_verbs = file1.read()
+        common_verbs = json.loads(common_verbs)
+        return common_verbs
+
+    def get_random_conjugation(self, verbs, tenses) -> RandomVerb:
+        random_verb = random.choice(list(verbs.keys()))
+        random_tense = random.choice(list(tenses))
+        random_conjugation = random.choice(list(verbs[random_verb][random_tense]))
+        return RandomVerb(random_verb, random_tense, random_conjugation)
+
+    def quiz_question(self, pronoun):
+        split_pronoun = pronoun.split()
+        answer = self.get_user_input(prompt=f"-->{split_pronoun[0]} ")
+        answer = answer.strip()
+        answer = f"{split_pronoun[0]} {answer}"
+        split_pronoun = f"{split_pronoun[0]} {split_pronoun[1]}"
+        self.check_user_input(answer, split_pronoun)
+
+    def common_verb_quiz_setup(self):
+        self.display_language()
+        self.selected_lang = self.get_user_input()
+        self.lang_code = self.get_language_code(self.selected_lang)
+        self.conjugator_instance = Conjugator(self.lang_code)

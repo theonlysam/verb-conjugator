@@ -1,7 +1,7 @@
 import pytest
 from verbecc import Conjugator
 
-from verb_conjugator import VerbConjugator
+from verb_conjugator.verb_conjugator import VerbConjugator
 
 
 @pytest.fixture(scope="session")

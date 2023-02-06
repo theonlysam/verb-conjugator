@@ -1,8 +1,8 @@
 import json
 import random
 import sys
-from typing import NamedTuple
 from collections import defaultdict
+from typing import NamedTuple
 
 from verbecc import Conjugator
 
@@ -199,9 +199,9 @@ class VerbConjugator:
         mood = common_verbs[lang_code]["mood"]
         new_verbs = common_verbs[lang_code]["verbs"]
         tenses = common_verbs[lang_code]["tenses"]
-        
-        verbs = defaultdict(dict)  
-        for verb in new_verbs:            
+
+        verbs = defaultdict(dict)
+        for verb in new_verbs:
             self.conjugations = self.select_single_verb(verb=verb)
             for tense in tenses:
                 verbs[verb][tense] = {}
@@ -230,7 +230,7 @@ class VerbConjugator:
         split_pronoun = pronoun.split()
         answer = self.get_user_input(prompt=f"-->{split_pronoun[0]} ")
         answer = answer.strip()
-        if answer == 'q':
+        if answer == "q":
             return False
         else:
             answer = f"{split_pronoun[0]} {answer}"

@@ -1,6 +1,7 @@
 import json
 import random
 import sys
+from collections import defaultdict
 from typing import NamedTuple
 
 from verbecc import Conjugator
@@ -198,19 +199,20 @@ class VerbConjugator:
         mood = common_verbs[lang_code]["mood"]
         new_verbs = common_verbs[lang_code]["verbs"]
         tenses = common_verbs[lang_code]["tenses"]
-        # verbs = dict.fromkeys(french_verbs, {})tenses = dict.fromkeys(french_tenses, {})
-        verbs = {}  # verbs = dict.fromkeys(french_verbs, {})
+
+        verbs = defaultdict(dict)
         for verb in new_verbs:
-            verbs[verb] = {}
             self.conjugations = self.select_single_verb(verb=verb)
             for tense in tenses:
                 verbs[verb][tense] = {}
                 verbs[verb][tense] = self.conjugations["moods"][mood][tense]
 
-        while True:
+        continue_loop = True
+        print("Welcome to random common verb quiz, press q to quit at anytime")
+        while continue_loop:
             random_verb = self.get_random_conjugation(verbs, tenses)
             print(f"\n{random_verb.tense} - {random_verb.verb}")
-            self.quiz_question(random_verb.conjugation)
+            continue_loop = self.quiz_question(random_verb.conjugation)
 
     def get_common_verbs(self, file_name="common_verbs.txt"):
         with open(file_name) as file1:
@@ -228,9 +230,13 @@ class VerbConjugator:
         split_pronoun = pronoun.split()
         answer = self.get_user_input(prompt=f"-->{split_pronoun[0]} ")
         answer = answer.strip()
-        answer = f"{split_pronoun[0]} {answer}"
-        split_pronoun = f"{split_pronoun[0]} {split_pronoun[1]}"
-        self.check_user_input(answer, split_pronoun)
+        if answer == "q":
+            return False
+        else:
+            answer = f"{split_pronoun[0]} {answer}"
+            split_pronoun = f"{split_pronoun[0]} {split_pronoun[1]}"
+            self.check_user_input(answer, split_pronoun)
+            return True
 
     def common_verb_quiz_setup(self):
         self.display_language()

@@ -1,7 +1,7 @@
   {   "fr": {
             "mood": "indicatif",
             "verbs": [
-                "aller", "avoir", "connaitre", "devoir", "dire", "donner", "etre", 
+                "aller", "avoir", "connaitre", "devoir", "dire", "donner", "etre",
                 "faire", "mettre", "pouvoir", "venir", "vouloir", "voir"
                 ],
             "tenses" : ["présent", "passé-composé", "imparfait", "futur-simple"]

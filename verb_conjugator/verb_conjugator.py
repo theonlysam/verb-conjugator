@@ -2,6 +2,7 @@ import json
 import random
 import sys
 from collections import defaultdict
+from pathlib import Path
 from typing import NamedTuple
 
 from verbecc import Conjugator
@@ -214,11 +215,10 @@ class VerbConjugator:
             print(f"\n{random_verb.tense} - {random_verb.verb}")
             continue_loop = self.quiz_question(random_verb.conjugation)
 
-    def get_common_verbs(self, file_name="common_verbs.txt"):
-        with open(file_name) as file1:
-            common_verbs = file1.read()
-        common_verbs = json.loads(common_verbs)
-        return common_verbs
+    def get_common_verbs(self):
+        common_verbs = Path("verb_conjugator") / "common_verbs.txt"
+        with open(common_verbs) as file1:
+            return json.loads(file1.read())
 
     def get_random_conjugation(self, verbs, tenses) -> RandomVerb:
         random_verb = random.choice(list(verbs.keys()))

@@ -9,6 +9,12 @@ Users can:
 
 For features 1 and 2 users can select the mood (indicative, subjunctive etc) as well as the tense (present, imperfect, future etc)
 
+### How to run verb-conjugator
+```
+$ pip install verb-conjugator
+$ conjugator
+```
+
 ### Usage
 ```
 Select an option:

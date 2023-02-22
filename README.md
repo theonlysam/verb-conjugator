@@ -9,16 +9,23 @@ Users can:
 
 For features 1 and 2 users can select the mood (indicative, subjunctive etc) as well as the tense (present, imperfect, future etc)
 
+### How to run verb-conjugator
+```
+$ pip install verb-conjugator
+$ conjugator
+```
+
 ### Usage
 ```
 Select an option:
-1 - Display verb conjugation 
+1 - Display verb conjugation
 2 - Single verb quiz
 3 - Common verbs quiz
 4 - Exit
 ```
 
 ### License
+MIT
 
 ### Credits
-This application uses the verbecc python library
+This application uses the [verbecc](https://github.com/bretttolbert/verbecc) python library and was developed as part of the [Python Developer Mindset (PDM)](https://pybit.es/catalogue/the-pdm-program/) program.

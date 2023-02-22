@@ -1,8 +1,6 @@
-import json
 import random
 import sys
 from collections import defaultdict
-from pathlib import Path
 from typing import NamedTuple
 
 from verbecc import Conjugator
@@ -48,15 +46,13 @@ class VerbConjugator:
             sys.exit(1)  # raise SystemExit
         return lang_code
 
-    # def get_language_instance(self, lang_code):
-    #     self.conjugator_instance = Conjugator(lang=lang_code)
-
     def select_single_verb(self, verb=None):
         verb_conjugation = None
+
         verb = verb or input("Enter the verb to practice conjugating --> ")
         try:
             verb_conjugation = self.conjugator_instance.conjugate(verb)
-        except AttributeError:
+        except Exception:
             print(f"{verb} does appear to be a valid verb")
         else:
             return verb_conjugation
@@ -216,9 +212,55 @@ class VerbConjugator:
             continue_loop = self.quiz_question(random_verb.conjugation)
 
     def get_common_verbs(self):
-        common_verbs = Path("verb_conjugator") / "common_verbs.txt"
-        with open(common_verbs) as file1:
-            return json.loads(file1.read())
+        common_verbs = {
+            "fr": {
+                "mood": "indicatif",
+                "verbs": [
+                    "aller",
+                    "avoir",
+                    "connaitre",
+                    "devoir",
+                    "dire",
+                    "donner",
+                    "etre",
+                    "faire",
+                    "mettre",
+                    "pouvoir",
+                    "venir",
+                    "vouloir",
+                    "voir",
+                ],
+                "tenses": ["présent", "passé-composé", "imparfait", "futur-simple"],
+            },
+            "es": {
+                "mood": "indicativo",
+                "verbs": [
+                    "conocer",
+                    "dar",
+                    "decir",
+                    "estar",
+                    "haber",
+                    "hacer",
+                    "ir",
+                    "poder",
+                    "poner",
+                    "querer",
+                    "saber",
+                    "ser",
+                    "tener",
+                    "venir",
+                    "ver",
+                ],
+                "tenses": [
+                    "presente",
+                    "pretérito-perfecto-simple",
+                    "pretérito-imperfecto",
+                    "futuro",
+                ],
+            },
+        }
+
+        return common_verbs
 
     def get_random_conjugation(self, verbs, tenses) -> RandomVerb:
         random_verb = random.choice(list(verbs.keys()))

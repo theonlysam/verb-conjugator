@@ -1,6 +1,6 @@
 import sys
 
-from .verb_conjugator import VerbConjugator
+from verb_conjugator import VerbConjugator
 
 
 def main():

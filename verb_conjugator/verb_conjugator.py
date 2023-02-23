@@ -211,57 +211,6 @@ class VerbConjugator:
             print(f"\n{random_verb.tense} - {random_verb.verb}")
             continue_loop = self.quiz_question(random_verb.conjugation)
 
-    def get_common_verbs(self):
-        common_verbs = {
-            "fr": {
-                "mood": "indicatif",
-                "verbs": [
-                    "aller",
-                    "avoir",
-                    "connaitre",
-                    "devoir",
-                    "dire",
-                    "donner",
-                    "etre",
-                    "faire",
-                    "mettre",
-                    "pouvoir",
-                    "venir",
-                    "vouloir",
-                    "voir",
-                ],
-                "tenses": ["présent", "passé-composé", "imparfait", "futur-simple"],
-            },
-            "es": {
-                "mood": "indicativo",
-                "verbs": [
-                    "conocer",
-                    "dar",
-                    "decir",
-                    "estar",
-                    "haber",
-                    "hacer",
-                    "ir",
-                    "poder",
-                    "poner",
-                    "querer",
-                    "saber",
-                    "ser",
-                    "tener",
-                    "venir",
-                    "ver",
-                ],
-                "tenses": [
-                    "presente",
-                    "pretérito-perfecto-simple",
-                    "pretérito-imperfecto",
-                    "futuro",
-                ],
-            },
-        }
-
-        return common_verbs
-
     def get_random_conjugation(self, verbs, tenses) -> RandomVerb:
         random_verb = random.choice(list(verbs.keys()))
         random_tense = random.choice(list(tenses))

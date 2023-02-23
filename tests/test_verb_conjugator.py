@@ -1,21 +1,12 @@
 import pytest
 from verbecc import Conjugator
 
-from verb_conjugator.verb_conjugator import VerbConjugator
+from verb_conjugator.verb_conjugator import ConjugatorError, VerbConjugator
 
 
 @pytest.fixture(scope="session")
 def verb_con():
-    return VerbConjugator()
-
-
-def test_empty_verb_conjugator_instance(verb_con):
-    assert verb_con.selected_lang is None
-
-
-def test_correct_language_keys(verb_con):
-    test_dict = {"1": "", "2": ""}
-    assert verb_con.languages.keys() == test_dict.keys()
+    return VerbConjugator("2")
 
 
 def test_user_input(verb_con):
@@ -42,9 +33,12 @@ def test_incorrect_language_code_raises_exception(verb_con):
         verb_con.get_language_code(99)
 
 
-def test_nonexistent_french_verb_raises_exception(verb_con):
+def test_nonexistent_french_verb_raises_exception(verb_con, capfd):
     "Want to test select_single_verb method"
-    # verb_con.select_single_verb("verb")
+    with pytest.raises(ConjugatorError):
+        verb_con.select_single_verb("verb")
+    # actual = capfd.readouterr().out.strip()
+    # assert actual == "verb does appear to be a valid verb"
 
 
 def test_if_valid_french_moods_are_returned(verb_con):

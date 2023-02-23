@@ -3,7 +3,12 @@ import sys
 from collections import defaultdict
 from typing import NamedTuple
 
-from verbecc import Conjugator
+from verbecc import Conjugator, ConjugatorError
+
+LANGUAGES = {
+    "1": {"code": "fr", "language": "French"},
+    "2": {"code": "es", "language": "Spanish"},
+}
 
 
 class RandomVerb(NamedTuple):
@@ -13,15 +18,16 @@ class RandomVerb(NamedTuple):
 
 
 class VerbConjugator:
-    def __init__(self):
-        self.languages = {
-            "1": {"code": "fr", "language": "French"},
-            "2": {"code": "es", "language": "Spanish"},
-        }
+    def __init__(self, language_number=None):
+        if language_number is None:
+            self.display_language()
+            language_number = self.get_user_input()
+
+        self.lang_code = self.get_language_code(language_number)
+        self.conjugator_instance = Conjugator(self.lang_code)
+
         self.user_input = None
-        self.selected_lang = None
-        self.lang_code = None
-        self.conjugator_instance = None
+
         self.conjugations = None
         self.selected_mood_and_tense = {}
         self.moods = []
@@ -30,8 +36,8 @@ class VerbConjugator:
 
     def display_language(self):
         print("Select a target language")
-        for key in self.languages.keys():
-            print(f'{key} - {self.languages[key]["language"]}')
+        for key in LANGUAGES.keys():
+            print(f'{key} - {LANGUAGES[key]["language"]}')
 
     def get_user_input(self, prompt="--> ", user_input=None):
         user_input = user_input or input(prompt)
@@ -40,7 +46,7 @@ class VerbConjugator:
     def get_language_code(self, language):
         lang_code = None
         try:
-            lang_code = self.languages[language]["code"]
+            lang_code = LANGUAGES[language]["code"]
         except KeyError:
             print("Enter a valid number from the list to choose a language")
             sys.exit(1)  # raise SystemExit
@@ -52,8 +58,9 @@ class VerbConjugator:
         verb = verb or input("Enter the verb to practice conjugating --> ")
         try:
             verb_conjugation = self.conjugator_instance.conjugate(verb)
-        except Exception:
+        except ConjugatorError:
             print(f"{verb} does appear to be a valid verb")
+            raise
         else:
             return verb_conjugation
 
@@ -157,12 +164,9 @@ class VerbConjugator:
                     print(pronoun)
 
     def setup(self):
-        self.display_language()
-        self.selected_lang = self.get_user_input()
-        self.lang_code = self.get_language_code(self.selected_lang)
-        self.conjugator_instance = Conjugator(self.lang_code)
-        self.conjugations = self.select_single_verb()
-        if not self.conjugations:
+        try:
+            self.conjugations = self.select_single_verb()
+        except ConjugatorError:
             print("Unable to continue")
             sys.exit("Exiting")
         self.display_mood()
@@ -199,7 +203,10 @@ class VerbConjugator:
 
         verbs = defaultdict(dict)
         for verb in new_verbs:
-            self.conjugations = self.select_single_verb(verb=verb)
+            try:
+                self.conjugations = self.select_single_verb(verb=verb)
+            except ConjugatorError:
+                continue
             for tense in tenses:
                 verbs[verb][tense] = {}
                 verbs[verb][tense] = self.conjugations["moods"][mood][tense]
@@ -228,9 +235,3 @@ class VerbConjugator:
             split_pronoun = f"{split_pronoun[0]} {split_pronoun[1]}"
             self.check_user_input(answer, split_pronoun)
             return True
-
-    def common_verb_quiz_setup(self):
-        self.display_language()
-        self.selected_lang = self.get_user_input()
-        self.lang_code = self.get_language_code(self.selected_lang)
-        self.conjugator_instance = Conjugator(self.lang_code)

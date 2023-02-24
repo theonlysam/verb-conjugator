@@ -16,7 +16,6 @@ def main():
             vc.setup()
             vc.drill_and_practice()
         elif user_selection == "3":
-            vc.common_verb_quiz_setup()
             vc.common_verbs_quiz(COMMON_VERBS)
         else:
             print("\nGoodbye!")

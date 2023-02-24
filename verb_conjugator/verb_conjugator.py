@@ -1,11 +1,14 @@
-import json
 import random
 import sys
 from collections import defaultdict
-from pathlib import Path
 from typing import NamedTuple
 
-from verbecc import Conjugator
+from verbecc import Conjugator, ConjugatorError
+
+LANGUAGES = {
+    "1": {"code": "fr", "language": "French"},
+    "2": {"code": "es", "language": "Spanish"},
+}
 
 
 class RandomVerb(NamedTuple):
@@ -15,15 +18,16 @@ class RandomVerb(NamedTuple):
 
 
 class VerbConjugator:
-    def __init__(self):
-        self.languages = {
-            "1": {"code": "fr", "language": "French"},
-            "2": {"code": "es", "language": "Spanish"},
-        }
+    def __init__(self, language_number=None):
+        if language_number is None:
+            self.display_language()
+            language_number = self.get_user_input()
+
+        self.lang_code = self.get_language_code(language_number)
+        self.conjugator_instance = Conjugator(self.lang_code)
+
         self.user_input = None
-        self.selected_lang = None
-        self.lang_code = None
-        self.conjugator_instance = None
+
         self.conjugations = None
         self.selected_mood_and_tense = {}
         self.moods = []
@@ -32,8 +36,8 @@ class VerbConjugator:
 
     def display_language(self):
         print("Select a target language")
-        for key in self.languages.keys():
-            print(f'{key} - {self.languages[key]["language"]}')
+        for key in LANGUAGES.keys():
+            print(f'{key} - {LANGUAGES[key]["language"]}')
 
     def get_user_input(self, prompt="--> ", user_input=None):
         user_input = user_input or input(prompt)
@@ -42,22 +46,21 @@ class VerbConjugator:
     def get_language_code(self, language):
         lang_code = None
         try:
-            lang_code = self.languages[language]["code"]
+            lang_code = LANGUAGES[language]["code"]
         except KeyError:
             print("Enter a valid number from the list to choose a language")
             sys.exit(1)  # raise SystemExit
         return lang_code
 
-    # def get_language_instance(self, lang_code):
-    #     self.conjugator_instance = Conjugator(lang=lang_code)
-
     def select_single_verb(self, verb=None):
         verb_conjugation = None
+
         verb = verb or input("Enter the verb to practice conjugating --> ")
         try:
             verb_conjugation = self.conjugator_instance.conjugate(verb)
-        except AttributeError:
+        except ConjugatorError:
             print(f"{verb} does appear to be a valid verb")
+            raise
         else:
             return verb_conjugation
 
@@ -161,12 +164,9 @@ class VerbConjugator:
                     print(pronoun)
 
     def setup(self):
-        self.display_language()
-        self.selected_lang = self.get_user_input()
-        self.lang_code = self.get_language_code(self.selected_lang)
-        self.conjugator_instance = Conjugator(self.lang_code)
-        self.conjugations = self.select_single_verb()
-        if not self.conjugations:
+        try:
+            self.conjugations = self.select_single_verb()
+        except ConjugatorError:
             print("Unable to continue")
             sys.exit("Exiting")
         self.display_mood()
@@ -203,7 +203,10 @@ class VerbConjugator:
 
         verbs = defaultdict(dict)
         for verb in new_verbs:
-            self.conjugations = self.select_single_verb(verb=verb)
+            try:
+                self.conjugations = self.select_single_verb(verb=verb)
+            except ConjugatorError:
+                continue
             for tense in tenses:
                 verbs[verb][tense] = {}
                 verbs[verb][tense] = self.conjugations["moods"][mood][tense]
@@ -214,11 +217,6 @@ class VerbConjugator:
             random_verb = self.get_random_conjugation(verbs, tenses)
             print(f"\n{random_verb.tense} - {random_verb.verb}")
             continue_loop = self.quiz_question(random_verb.conjugation)
-
-    def get_common_verbs(self):
-        common_verbs = Path("verb_conjugator") / "common_verbs.txt"
-        with open(common_verbs) as file1:
-            return json.loads(file1.read())
 
     def get_random_conjugation(self, verbs, tenses) -> RandomVerb:
         random_verb = random.choice(list(verbs.keys()))
@@ -237,9 +235,3 @@ class VerbConjugator:
             split_pronoun = f"{split_pronoun[0]} {split_pronoun[1]}"
             self.check_user_input(answer, split_pronoun)
             return True
-
-    def common_verb_quiz_setup(self):
-        self.display_language()
-        self.selected_lang = self.get_user_input()
-        self.lang_code = self.get_language_code(self.selected_lang)
-        self.conjugator_instance = Conjugator(self.lang_code)

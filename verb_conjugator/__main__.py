@@ -1,5 +1,6 @@
 import sys
 
+from .data import COMMON_VERBS
 from .verb_conjugator import VerbConjugator
 
 
@@ -15,9 +16,7 @@ def main():
             vc.setup()
             vc.drill_and_practice()
         elif user_selection == "3":
-            vc.common_verb_quiz_setup()
-            verbs = vc.get_common_verbs()
-            vc.common_verbs_quiz(verbs)
+            vc.common_verbs_quiz(COMMON_VERBS)
         else:
             print("\nGoodbye!")
             sys.exit(0)
